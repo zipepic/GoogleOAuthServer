@@ -17,9 +17,15 @@ public class OAuthController {
             map.put("expires_at", authorizedClient.getAccessToken().getExpiresAt().toString());
             map.put("principal_name", authorizedClient.getPrincipalName());
         }
-        if(authorizedClient.getRefreshToken()!=null){
-            map.put("refresh_token", authorizedClient.getRefreshToken().getTokenValue());
-            map.put("refresh_token_expires_at", authorizedClient.getRefreshToken().getExpiresAt().toString());
+        if(authorizedClient.getRefreshToken()!=null) {
+            var refreshToken = authorizedClient.getRefreshToken();
+            map.put("refresh_token", refreshToken.getTokenValue());
+            if(refreshToken.getIssuedAt()!=null){
+                map.put("refresh_IssuedAt", refreshToken.getIssuedAt().toString());
+            }
+            if(refreshToken.getExpiresAt()!=null){
+                map.put("refresh_ExpiresAt", refreshToken.getExpiresAt().toString());
+            }
         }
 
         return map.toString();

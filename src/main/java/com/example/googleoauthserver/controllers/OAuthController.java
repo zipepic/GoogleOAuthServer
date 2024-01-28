@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2Aut
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 @RestController
@@ -21,9 +22,18 @@ public class OAuthController {
     public String getUserInfo(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient) {
         Map<String,String> map = new HashMap<>();
         if(authorizedClient.getAccessToken()!= null){
+            try {
+                String youtubeChannelId = youtubeChannelDataService
+                        .getYoutubeChannelId(authorizedClient.getAccessToken().getTokenValue());
+                map.put("youtubeChannelId", youtubeChannelId);
+            } catch (IOException ex){
+                map.put("youtubeChannelIdException", ex.getMessage());
+            }
+
             map.put("access_token", authorizedClient.getAccessToken().getTokenValue());
             map.put("expires_at", authorizedClient.getAccessToken().getExpiresAt().toString());
             map.put("principal_name", authorizedClient.getPrincipalName());
+
         }
         if(authorizedClient.getRefreshToken()!=null){
             map.put("refresh_token", authorizedClient.getRefreshToken().getTokenValue());
